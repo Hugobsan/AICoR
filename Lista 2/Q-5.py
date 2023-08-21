@@ -38,12 +38,16 @@ print("---- Algoritmo Perceptron ----")
 print("\n")
 
 #Injetando configurações passadas na atividade
-perceptron = Perceptron(4, 0.4, [-0.5, 0.4, -0.6, 0.6])
+perceptron = Perceptron(5, 0.4, [0.1, 0.2, -0.2, -0.2, -0.3])
 
 #Definindo entradas de treinamento
 training_entries = [
-    {"inputs": [1, 0, 0, 1], "label": 0},
-    {"inputs": [1, 1, 1, 0], "label": 1},
+  { "inputs": [1, 1, 1, 0, 1], "label": 1 },
+  { "inputs": [1, 0, 0, 1, 0], "label": 0 },
+  { "inputs": [1, 1, 1, 0, 0], "label": 0 },
+  { "inputs": [1, 1, 0, 1, 1], "label": 1 },
+  { "inputs": [1, 1, 0, 0, 1], "label": 0 },
+  { "inputs": [1, 0, 0, 1, 1], "label": 1 },
 ]
 
 #Exibindo algumas informações do problema
@@ -72,7 +76,7 @@ while True:
             finish += 1
     if(finish == training_entries.__len__()):
         break
-
+    
 print("--------------------------------")
 print("Treinamento Finalizado!")
 print("Número de Iterações: ", perceptron.trainingIterations)
@@ -81,9 +85,7 @@ print("--------------------------------")
 
 print("\n")
 print("Testando o modelo:")
-print("Entrada: [1, 1, 1, 1] -> ", perceptron.predict([1, 1, 1, 1]))
-print("Entrada: [1, 0, 0, 0] -> ", perceptron.predict([1, 0, 0, 0]))
-print("Entrada: [1, 1, 0, 0] -> ", perceptron.predict([1, 1, 0, 0]))
-print("Entrada: [1, 0, 1, 1] -> ", perceptron.predict([1, 0, 1, 1]))
+print("Luiz: ", perceptron.predict([1, 0, 0, 0, 1]))
+print("Laura: ", perceptron.predict([1, 1, 1, 1, 1]))
 
 input("Pressione ENTER para sair...")
