@@ -52,17 +52,16 @@ for entry in training_entries:
 print("")
 print("--------------------------------")
 
+#exibindo a primeira iteração antes do loop
 perceptron.trainingIterations += 1
-
-print("Iteração:", perceptron.trainingIterations, ", Pesos: ", perceptron.weights)
+print("Iteração:", perceptron.trainingIterations, ", Pesos:", perceptron.weights)
 while True:
     ##Treinando o modelo
     for entry in training_entries:
         perceptron.train(entry.get("inputs"), entry.get("label"))
     
     perceptron.trainingIterations += 1
-    print("Iteração:", perceptron.trainingIterations, ", Pesos: ", perceptron.weights)
-
+    print("Iteração:", perceptron.trainingIterations, ", Pesos:", perceptron.weights)
     finish = 0
     
     ##Testando o modelo
