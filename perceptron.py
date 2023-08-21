@@ -8,6 +8,7 @@ class Perceptron:
         self.trainingIterations = 0
         self.learningRate = LrnRate
 
+        #Caso não seja passado um valor default para os pesos, eles serão gerados aleatoriamente
         if(defaultWeights):
             self.weights = defaultWeights
         else:
@@ -23,6 +24,7 @@ class Perceptron:
         
         return 0 if sum <= 0 else 1
     
+    #Método que treina o perceptron com os dados de entrada e saída esperada
     def train(self, inputs, target):
         guess = self.predict(inputs)
         error = target - guess
@@ -35,13 +37,16 @@ class Perceptron:
 print("---- Algoritmo Perceptron ----")
 print("\n")
 
+#Injetando configurações passadas na atividade
 perceptron = Perceptron(4, 0.4, [-0.5, 0.4, -0.6, 0.6])
 
+#Definindo entradas de treinamento
 training_entries = [
     {"inputs": [1, 0, 0, 1], "label": 0},
     {"inputs": [1, 1, 1, 0], "label": 1},
 ]
 
+#Exibindo algumas informações do problema
 print("--------------------------------")
 print("Número de entradas: ", perceptron.weights.__len__())
 print("Pesos iniciais: ", perceptron.weights)
@@ -56,7 +61,7 @@ print("--------------------------------")
 perceptron.trainingIterations += 1
 print("Iteração:", perceptron.trainingIterations, ", Pesos:", perceptron.weights)
 while True:
-    ##Treinando o modelo
+    ##Rodando um ciclo de treinamento do modelo
     for entry in training_entries:
         perceptron.train(entry.get("inputs"), entry.get("label"))
     
@@ -64,13 +69,13 @@ while True:
     print("Iteração:", perceptron.trainingIterations, ", Pesos:", perceptron.weights)
     finish = 0
     
-    ##Testando o modelo
+    ##Testando o modelo. Caso o modelo acerte todas as entradas de treinamento, o loop é finalizado
     for entry in training_entries:
         if(entry.get("label") == perceptron.predict(entry.get("inputs"))): 
             finish += 1
-
     if(finish == training_entries.__len__()):
         break
+    
 print("--------------------------------")
 print("Treinamento Finalizado!")
 print("Número de Iterações: ", perceptron.trainingIterations)
