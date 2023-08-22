@@ -2,9 +2,9 @@ import random
 
 class Perceptron:
     #Método construtor do perceptron
-    def __init__(self, inputSize, LrnRate, defaultWeights):
+    def __init__(self, inputSize, LrnRate, bias, defaultWeights):
         self.weights = []
-        self.bias = 0.5
+        self.bias = bias
         self.trainingIterations = 0
         self.learningRate = LrnRate
 
@@ -22,7 +22,7 @@ class Perceptron:
         for i in range(inputs.__len__()):
             sum += inputs[i] * self.weights[i]
         
-        return 0 if sum <= 0 else 1
+        return 0 if sum < self.bias else 1
     
     #Método que treina o perceptron com os dados de entrada e saída esperada
     def train(self, inputs, target):
@@ -31,14 +31,12 @@ class Perceptron:
 
         for i in range(self.weights.__len__()):
             self.weights[i] += self.learningRate * error * inputs[i]
-        
-        self.bias += self.learningRate * error
 
 print("---- Algoritmo Perceptron ----")
 print("\n")
 
 #Injetando configurações passadas na atividade
-perceptron = Perceptron(3, 0.3, [0.4, -0.6, 0.6])
+perceptron = Perceptron(3, 0.3, 0.5, [0.4, -0.6, 0.6])
 
 #Definindo entradas de treinamento
 training_entries = [
