@@ -2,9 +2,9 @@ import random
 
 class Perceptron:
     #Método construtor do perceptron
-    def __init__(self, inputSize, LrnRate, defaultWeights):
+    def __init__(self, inputSize, LrnRate, bias, defaultWeights):
         self.weights = []
-        self.bias = 0
+        self.bias = bias
         self.trainingIterations = 0
         self.learningRate = LrnRate
 
@@ -22,7 +22,7 @@ class Perceptron:
         for i in range(inputs.__len__()):
             sum += inputs[i] * self.weights[i]
         
-        return 0 if sum <= 0 else 1
+        return 0 if sum < self.bias else 1
     
     #Método que treina o perceptron com os dados de entrada e saída esperada
     def train(self, inputs, target):
@@ -31,19 +31,17 @@ class Perceptron:
 
         for i in range(self.weights.__len__()):
             self.weights[i] += self.learningRate * error * inputs[i]
-        
-        self.bias += self.learningRate * error
 
 print("---- Algoritmo Perceptron ----")
 print("\n")
 
 #Injetando configurações passadas na atividade
-perceptron = Perceptron(4, 0.4, [-0.5, 0.4, -0.6, 0.6])
+perceptron = Perceptron(3, 0.3, 0.5, [0.4, -0.6, 0.6])
 
 #Definindo entradas de treinamento
 training_entries = [
-    {"inputs": [1, 0, 0, 1], "label": 0},
-    {"inputs": [1, 1, 1, 0], "label": 1},
+  { "inputs": [0, 0, 1], "label": 0 },
+  { "inputs": [1, 1, 0], "label": 1 }
 ]
 
 #Exibindo algumas informações do problema
@@ -72,18 +70,11 @@ while True:
             finish += 1
     if(finish == training_entries.__len__()):
         break
-
+    
 print("--------------------------------")
 print("Treinamento Finalizado!")
 print("Número de Iterações: ", perceptron.trainingIterations)
 print("Pesos Finais: ", perceptron.weights)
 print("--------------------------------")
-
-print("\n")
-print("Testando o modelo:")
-print("Entrada: [1, 1, 1, 1] -> ", perceptron.predict([1, 1, 1, 1]))
-print("Entrada: [1, 0, 0, 0] -> ", perceptron.predict([1, 0, 0, 0]))
-print("Entrada: [1, 1, 0, 0] -> ", perceptron.predict([1, 1, 0, 0]))
-print("Entrada: [1, 0, 1, 1] -> ", perceptron.predict([1, 0, 1, 1]))
 
 input("Pressione ENTER para sair...")
