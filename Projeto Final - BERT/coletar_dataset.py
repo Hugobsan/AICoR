@@ -1,41 +1,80 @@
-import tweepy
-import csv
+import json
+import pandas as pd
+from tqdm import tqdm
 
-# Configure suas chaves de API
-consumer_key = 'sua_consumer_key'
-consumer_secret = 'sua_consumer_secret'
-access_token = 'seu_access_token'
-access_token_secret = 'seu_access_token_secret'
+import seaborn as sns
+import matplotlib.pyplot as plt
 
-# Autentique-se na API do Twitter
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
-api = tweepy.API(auth)
+from pygments import highlight
+from pygments.lexers import JsonLexer
+from pygments.formatters import TerminalFormatter
 
-# Realize uma busca por tweets com a palavra-chave "python"
-query = 'python'
-num_tweets = 5000
+from google_play_scraper import Sort, reviews, app
 
-# Lista para armazenar os tweets
-tweets_list = []
+%matplotlib inline
+%config InlineBackend.figure_format='retina'
 
-# Coleta de tweets
-for tweet in tweepy.Cursor(api.search, q=query, lang='en').items(num_tweets):
-    # Obtenha a polaridade do Sentiment140 (0 ou 4)
-    polarity = 0 if tweet.favorite_count == 0 else 4
-    
-    # Converta a polaridade para "Negativo" ou "Positivo"
-    sentiment = 'Negativo' if polarity == 0 else 'Positivo'
-    
-    tweets_list.append([tweet.id, tweet.created_at, tweet.text, sentiment])
+sns.set(style='whitegrid', palette='muted', font_scale=1.2)
 
-# Salvar os tweets em um arquivo CSV
-csv_file_path = 'tweets_python_sentiment140.csv'
-header = ['ID', 'Data de Criação', 'Texto', 'Sentimento']
+apps_ids = ['br.com.brainweb.ifood', 
+            'com.cerveceriamodelo.modelonow', 
+            'com.mcdo.mcdonalds', 
+            'habibs.alphacode.com.br', 
+            'com.xiaojukeji.didi.brazil.customer', 
+            'com.ubercab.eats', 
+            'com.grability.rappi', 
+            'burgerking.com.br.appandroid', 
+            'com.vanuatu.aiqfome']
 
-with open(csv_file_path, 'w', newline='', encoding='utf-8') as file:
-    writer = csv.writer(file)
-    writer.writerow(header)
-    writer.writerows(tweets_list)
+app_infos = []
 
-print(f'{num_tweets} tweets foram coletados e salvos em {csv_file_path}.')
+for ap in tqdm(apps_ids):
+    info = app(ap, lang='en', country='us')
+    del info['comments']
+    app_infos.append(info)
+
+app_infos_df = pd.DataFrame(app_infos)
+app_infos_df.head(9)
+
+app_reviews = []
+
+for ap in tqdm(apps_ids):
+    for score in list(range(1, 6)):
+        for sort_order in [Sort.MOST_RELEVANT, Sort.NEWEST]:
+            rvs, _ = reviews(
+                ap,
+                lang='pt',
+                country='br',
+                sort=sort_order,
+                count= 400 if score == 3 else 200,
+                filter_score_with=score
+            )
+            for r in rvs:
+                r['sortOrder'] = 'most_relevant' if sort_order == Sort.MOST_RELEVANT else 'newest'
+                r['appId'] = ap
+            app_reviews.extend(rvs)
+
+df = pd.DataFrame(app_reviews)
+
+sns.countplot(df.score)
+plt.xlabel('review score');
+
+def to_sentiment(rating):
+  rating = int(rating)
+  if rating <= 2:
+    return 0
+  elif rating == 3:
+    return 1
+  else: 
+    return 2
+
+df['sentiment'] = df.score.apply(to_sentiment)
+
+class_names = ['negative', 'neutral', 'positive']
+
+ax = sns.countplot(df.sentiment)
+plt.xlabel('review sentiment')
+ax.set_xticks(range(len(class_names)))
+ax.set_xticklabels(class_names);
+
+df.to_csv('reviews.csv', index=None, header=True)
