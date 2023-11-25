@@ -1,5 +1,5 @@
 ##Modificação de parâmetros
-BIN_PATH = 'tentativa de centralizar/trained.bin'
+BIN_PATH = 'trained.bin'
 
 #Nome do modelo pré treinado para tokenização das entradas
 PRE_TRAINED_MODEL_NAME = 'neuralmind/bert-base-portuguese-cased'
